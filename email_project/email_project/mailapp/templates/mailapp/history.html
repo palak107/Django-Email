@@ -1,0 +1,127 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sent History</title>
+
+  <style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top left, #0f0f0f, #1a1a1a);
+    color: #e5e7eb;
+  }
+
+  .container {
+    max-width: 880px;
+    margin: 60px auto;
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 255, 255, 0.08);
+    padding: 48px;
+    border: 1px solid #2d2d2d;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 2.4em;
+    color: #00e0ff;
+    margin-bottom: 36px;
+    letter-spacing: 1.2px;
+    font-weight: 600;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    margin-bottom: 24px;
+    padding: 24px;
+    background: linear-gradient(to right, #1f1f1f, #2a2a2a);
+    border: 1px solid #3a3a3a;
+    border-radius: 12px;
+    transition: background 0.3s ease;
+  }
+
+  li:hover {
+    background: #333;
+  }
+
+  li strong {
+    color: #00bfff;
+    font-size: 1.2em;
+    font-weight: 500;
+  }
+
+  li em {
+    color: #aaa;
+    font-size: 0.9em;
+    margin-left: 6px;
+  }
+
+  li ul {
+    margin-top: 14px;
+    padding-left: 20px;
+  }
+
+  li ul li {
+    background: #2e2e2e;
+    border: 1px solid #444;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    color: #ddd;
+    font-size: 0.95em;
+  }
+
+  a {
+    color: #00ffff;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    color: #00bfff;
+  }
+
+  .no-attachments {
+    color: #999;
+    font-style: italic;
+    font-size: 0.95em;
+  }
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>📬 Sent History</h1>
+    <ul>
+      {% for e in emails %}
+        <li>
+          <strong>{{ e.subject }}</strong> — 
+          <span>{{ e.sender }}</span> to 
+          <span>{{ e.recipients }}</span>
+          <em> ({{ e.timestamp }})</em>
+          
+          <ul>
+            {% for a in e.attachments.all %}
+              <li><a href="{{ a.file.url }}">{{ a.original_name }}</a></li>
+            {% empty %}
+              <li class="no-attachments">No attachments</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% empty %}
+        <li>No sent emails found.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</body>
+</html>

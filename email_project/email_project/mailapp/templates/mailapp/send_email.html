@@ -1,0 +1,226 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Send Email</title>
+
+  <style>
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f1117;
+    margin: 0;
+    padding: 0;
+    color: #e5e7eb;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 60px auto;
+    background: #1a1c23;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    border: 1px solid #2c2f36;
+  }
+
+  h1 {
+    text-align: center;
+    color: #60a5fa;
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 10px;
+    color: #cbd5e1;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #111827;
+    color: #f3f4f6;
+    transition: border-color 0.2s;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #3b82f6;
+    outline: none;
+    background-color: #1f2937;
+  }
+
+  button {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 14px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background 0.3s;
+    width: 100%;
+  }
+
+  button:hover {
+    background: #2563eb;
+  }
+
+  hr {
+    margin: 40px 0;
+    border: none;
+    height: 1px;
+    background: #374151;
+  }
+
+  .history {
+    background: #111827;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #2c2f36;
+  }
+
+  .history h2 {
+    color: #60a5fa;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 22px;
+  }
+
+  .history ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .history li {
+    background: #1f2937;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    padding: 12px 18px;
+    line-height: 1.6;
+    font-size: 15px;
+    color: #d1d5db;
+  }
+
+  .alert {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 15px;
+  }
+
+  .alert.success {
+    background: #064e3b;
+    color: #d1fae5;
+    border: 1px solid #10b981;
+  }
+
+  .alert.error {
+    background: #7f1d1d;
+    color: #fee2e2;
+    border: 1px solid #ef4444;
+  }
+</style>
+
+  <!-- ✅ CKEditor -->
+  <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Send Email</h1>
+
+    {% if messages %}
+      {% for m in messages %}
+        <div class="alert {{ m.tags }}">{{ m }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="form-group">
+        <label for="id_sender">Sender Email</label>
+        {{ form.sender }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_to">Receiver Email(s)</label>
+        {{ form.to }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_cc">CC</label>
+        {{ form.cc }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_subject">Subject</label>
+        {{ form.subject }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_body">Message</label>
+        {{ form.body }}
+      </div>
+
+      <div class="form-group">
+        <label for="id_attachments">Attachments</label>
+        {{ form.attachments }}
+      </div>
+
+      <button type="submit">Send Email</button>
+    </form>
+
+    <hr>
+
+    {% if sent_emails %}
+    <div class="history">
+      <h2>Email History</h2>
+      <ul>
+        {% for email in sent_emails %}
+        <li>
+          <strong>To:</strong> {{ email.recipients }} |
+          <strong>Subject:</strong> {{ email.subject }} |
+          <strong>Sent:</strong> {{ email.sent_at }}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    CKEDITOR.replace('id_body', {
+      height: 250,
+      removePlugins: 'elementspath',
+      resize_enabled: false,
+      toolbar: [
+        { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', '-', 'TextColor', 'BGColor'] },
+        { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'JustifyLeft','JustifyCenter','JustifyRight'] },
+        { name: 'links', items: ['Link', 'Unlink'] },
+        { name: 'insert', items: ['Image', 'Table'] },
+        { name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+        { name: 'tools', items: ['Maximize'] }
+      ]
+    });
+  </script>
+</body>
+</html>
